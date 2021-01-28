@@ -10,20 +10,26 @@ import { GET_ROOM } from '../../core/room/schema';
 import ChatBubble from '../ChatBubble/ChatBubble';
 import { Room } from '../../common/type';
 import { useQuery } from '@apollo/client';
+// import { Subscription } from 'react-apollo';
+import useMessageAdded from '../../core/hooks/useMessageAdded';
 const moment = require('moment');
 
 interface Props {}
 
 export const ChatArea: React.FC<Props> = () => {
-  const { loading, error, data } = useQuery<{ getRoom: Room }>(GET_ROOM, {
+  const getRoomQuery = useQuery<{ getRoom: Room }>(GET_ROOM, {
     variables: {
       id: 'cee6b3b3-7ca3-4b35-a068-c4c5644129f4',
     },
   });
-  if (error) {
-    console.log(error);
+  if (getRoomQuery.error) {
+    console.log(getRoomQuery.error);
   }
-  console.log(data);
+  const newMessageAddedSubscription = useMessageAdded(
+    'cee6b3b3-7ca3-4b35-a068-c4c5644129f4'
+  );
+
+  console.log(newMessageAddedSubscription);
   return (
     <FlexBox
       style={{ height: '100%' }}
@@ -36,7 +42,8 @@ export const ChatArea: React.FC<Props> = () => {
         style={{ backgroundColor: 'white', height: '70px', width: '100%' }}
       >
         <div>
-          {data?.getRoom?.name} 😯 {data?.getRoom?.members.length} members
+          {getRoomQuery.data?.getRoom?.name} 😯{' '}
+          {getRoomQuery.data?.getRoom?.members.length} members
         </div>
       </FlexBox>
       <FlexBox style={{ padding: '20px 0px', height: '100%' }}>
@@ -47,10 +54,10 @@ export const ChatArea: React.FC<Props> = () => {
               overflowY: 'auto',
             }}
           >
-            {loading ? (
+            {getRoomQuery.loading ? (
               <div>Loading...</div>
             ) : (
-              data?.getRoom?.messages.map((message) => (
+              getRoomQuery?.data?.getRoom?.messages.map((message) => (
                 <ChatBubble
                   key={message.id}
                   message={message.message}

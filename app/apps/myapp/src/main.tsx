@@ -35,7 +35,8 @@ const link = split(
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link: link,
+  // link: link,
+  uri: SERVER_URI,
 });
 
 ReactDOM.render(
