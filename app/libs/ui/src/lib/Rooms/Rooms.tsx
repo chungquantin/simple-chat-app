@@ -29,7 +29,7 @@ export const Rooms: React.FC<{}> = () => {
           <MeetingList
             className="meeting-list"
             onClick={handleClick}
-            onMeetingCLick={handleMeetingClick}
+            onMeetingClick={handleMeetingClick}
             dataSource={[
               {
                 id: d.id,

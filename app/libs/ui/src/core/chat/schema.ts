@@ -14,3 +14,12 @@ export const NEW_ROOM_MESSAGE_ADDED = gql`
     }
   }
 `;
+
+export const ADD_NEW_MESSAGE = gql`
+  mutation SendMessage($id: String!, $message: String!) {
+    sendMessage(data: { roomId: $id, message: $message }) {
+      path
+      message
+    }
+  }
+`;

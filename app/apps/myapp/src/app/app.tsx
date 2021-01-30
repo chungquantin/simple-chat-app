@@ -30,13 +30,10 @@ export function App() {
       <Grid
         item={true}
         xs={12}
-        lg={6}
+        lg={9}
         style={{ backgroundColor: 'rgb(242, 242, 242)' }}
       >
         <ChatArea />
-      </Grid>
-      <Grid item={true} xs={12} lg={3}>
-        Hello
       </Grid>
     </Grid>
   );
