@@ -50,7 +50,6 @@ class SendMessageResolver {
 		@Root() chatPayload: ChatPayload,
 		@Arg("data") args: NewRoomMessageInput
 	): ChatPayload {
-		console.log(chatPayload);
 		return {
 			...chatPayload,
 		};
@@ -65,6 +64,7 @@ class SendMessageResolver {
 	) {
 		const room = await this.roomRepository.findOne({
 			where: { id: roomId },
+			relations: ["messages"],
 		});
 		if (!room) {
 			return {

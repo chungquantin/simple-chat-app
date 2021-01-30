@@ -10,6 +10,7 @@ import { GET_ROOM } from '../../core/room/schema';
 import ChatBubble from '../ChatBubble/ChatBubble';
 import { Room } from '../../common/type';
 import { useQuery } from '@apollo/client';
+import { Message } from '../../common/type';
 // import { Subscription } from 'react-apollo';
 import useMessageAdded from '../../core/hooks/useMessageAdded';
 const moment = require('moment');
@@ -25,11 +26,14 @@ export const ChatArea: React.FC<Props> = () => {
   if (getRoomQuery.error) {
     console.log(getRoomQuery.error);
   }
-  const newMessageAddedSubscription = useMessageAdded(
-    'cee6b3b3-7ca3-4b35-a068-c4c5644129f4'
-  );
+  const newMessagesAdded: Message[] = [];
+  const { data } = useMessageAdded('cee6b3b3-7ca3-4b35-a068-c4c5644129f4');
+  if (data?.newRoomMessageAdded) {
+    newMessagesAdded.push({ ...data?.newRoomMessageAdded });
+  }
 
-  console.log(newMessageAddedSubscription);
+  console.log(data);
+
   return (
     <FlexBox
       style={{ height: '100%' }}
@@ -59,17 +63,32 @@ export const ChatArea: React.FC<Props> = () => {
               <div>Loading...</div>
             ) : (
               getRoomQuery?.data?.getRoom?.messages.map((message) => (
-                <ChatBubble
-                  key={message.id}
-                  message={message.message}
-                  date={`${moment(message.createdAt).format(
-                    'DD-MM-YYYY hh:mm'
-                  )}`}
-                  senderName={message.sender.name}
-                  me={message.id === message.sender.id}
-                />
+                <>
+                  <ChatBubble
+                    key={message?.id}
+                    message={message?.message}
+                    date={`${moment(message?.createdAt).format(
+                      'DD-MM-YYYY hh:mm'
+                    )}`}
+                    senderName={message?.sender.name}
+                    me={message?.id === message?.sender.id}
+                  />
+                </>
               ))
             )}
+            {newMessagesAdded.map((message) => (
+              <>
+                <ChatBubble
+                  key={message?.id}
+                  message={message?.message}
+                  date={`${moment(message?.createdAt).format(
+                    'DD-MM-YYYY hh:mm'
+                  )}`}
+                  senderName={message?.sender.name}
+                  me={message?.id === message?.sender.id}
+                />
+              </>
+            ))}
           </List>
         </Grid>
       </FlexBox>
