@@ -4,12 +4,13 @@ import React from 'react';
 import { GET_ROOMS } from '../../core/room/schema';
 import { MeetingList } from 'react-chat-elements';
 import { Room } from '../../common/type';
+import { RoomContext } from '../../state-management/context';
 
 export const Rooms: React.FC<{}> = () => {
   const { loading, error, data } = useQuery<Room[]>(GET_ROOMS);
-
+  const roomContext = React.useContext(RoomContext);
   const handleClick = (e) => {
-    console.log('Here', e);
+    roomContext.roomAction.selectRoom(e.id);
   };
 
   const handleMeetingClick = () => {
@@ -19,7 +20,6 @@ export const Rooms: React.FC<{}> = () => {
   if (error) {
     console.log(error);
   }
-  console.log(data);
   return (
     <div>
       {loading ? (

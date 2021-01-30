@@ -13,21 +13,24 @@ import { useQuery } from '@apollo/client';
 import { Message } from '../../common/type';
 // import { Subscription } from 'react-apollo';
 import useMessageAdded from '../../core/hooks/useMessageAdded';
+import { RoomContext } from '../../state-management/context';
 const moment = require('moment');
 
 interface Props {}
 
 export const ChatArea: React.FC<Props> = () => {
+  const roomContext = React.useContext(RoomContext);
+  console.log(roomContext);
   const getRoomQuery = useQuery<{ getRoom: Room }>(GET_ROOM, {
     variables: {
-      id: 'cee6b3b3-7ca3-4b35-a068-c4c5644129f4',
+      id: roomContext.roomState.data?.selectedRoom,
     },
   });
   if (getRoomQuery.error) {
     console.log(getRoomQuery.error);
   }
   const newMessagesAdded: Message[] = [];
-  const { data } = useMessageAdded('cee6b3b3-7ca3-4b35-a068-c4c5644129f4');
+  const { data } = useMessageAdded(roomContext.roomState.data?.roomId);
   if (data?.newRoomMessageAdded) {
     newMessagesAdded.push({ ...data?.newRoomMessageAdded });
   }
