@@ -52,6 +52,7 @@ export const ChatArea: React.FC<Props> = () => {
             style={{
               height: '70vh',
               overflowY: 'auto',
+              padding: '10px',
             }}
           >
             {getRoomQuery.loading ? (
