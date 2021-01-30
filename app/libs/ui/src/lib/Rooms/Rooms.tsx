@@ -4,10 +4,17 @@ import React from 'react';
 import { GET_ROOMS } from '../../core/room/schema';
 import { MeetingList } from 'react-chat-elements';
 import { Room } from '../../common/type';
-const moment = require('moment');
 
 export const Rooms: React.FC<{}> = () => {
   const { loading, error, data } = useQuery<Room[]>(GET_ROOMS);
+
+  const handleClick = (e) => {
+    console.log('Here', e);
+  };
+
+  const handleMeetingClick = () => {
+    console.log('Meeting click');
+  };
 
   if (error) {
     console.log(error);
@@ -21,6 +28,8 @@ export const Rooms: React.FC<{}> = () => {
         (data as any).getRooms.map((d: Room) => (
           <MeetingList
             className="meeting-list"
+            onClick={handleClick}
+            onMeetingCLick={handleMeetingClick}
             dataSource={[
               {
                 id: d.id,

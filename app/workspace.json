@@ -135,6 +135,31 @@
           }
         }
       }
+    },
+    "state-management": {
+      "root": "libs/state-management",
+      "sourceRoot": "libs/state-management/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/state-management/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/state-management"
+          ],
+          "options": {
+            "jestConfig": "libs/state-management/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

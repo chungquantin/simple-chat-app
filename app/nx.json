@@ -23,6 +23,7 @@
   "projects": {
     "myapp": { "tags": [] },
     "myapp-e2e": { "tags": [], "implicitDependencies": ["myapp"] },
-    "ui": { "tags": [] }
+    "ui": { "tags": [] },
+    "state-management": { "tags": [] }
   }
 }

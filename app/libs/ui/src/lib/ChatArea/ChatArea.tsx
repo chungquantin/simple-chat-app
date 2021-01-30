@@ -32,8 +32,6 @@ export const ChatArea: React.FC<Props> = () => {
     newMessagesAdded.push({ ...data?.newRoomMessageAdded });
   }
 
-  console.log(data);
-
   return (
     <FlexBox
       style={{ height: '100%' }}
@@ -43,18 +41,23 @@ export const ChatArea: React.FC<Props> = () => {
       <FlexBox
         direction={FlexDirection.row}
         align={AlignItem.center}
-        style={{ backgroundColor: 'white', height: '70px', width: '100%' }}
+        style={{
+          backgroundColor: 'white',
+          height: '10vh',
+          padding: '0px 20px',
+          width: '100%',
+        }}
       >
         <div>
           {getRoomQuery.data?.getRoom?.name} 😯{' '}
           {getRoomQuery.data?.getRoom?.members.length} members
         </div>
       </FlexBox>
-      <FlexBox style={{ padding: '20px 0px', height: '100%' }}>
+      <FlexBox style={{ height: '75vh' }}>
         <Grid item xs={12}>
           <List
             style={{
-              height: '70vh',
+              height: '100%',
               overflowY: 'auto',
               padding: '10px',
             }}
@@ -92,7 +95,7 @@ export const ChatArea: React.FC<Props> = () => {
           </List>
         </Grid>
       </FlexBox>
-      <FlexBox style={{ backgroundColor: 'white', height: '100px' }}>
+      <FlexBox style={{ backgroundColor: 'white', height: '15vh' }}>
         World
       </FlexBox>
     </FlexBox>

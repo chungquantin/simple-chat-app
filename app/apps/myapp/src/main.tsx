@@ -8,9 +8,11 @@ import {
   split,
 } from '@apollo/client';
 import App from './app/app';
+import './styles.scss';
 import { SERVER_URI, WEB_SOCKET_URI } from './constant/global-variables';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
+import { RoomProvider } from '@app/ui';
 
 const httpLink = new HttpLink({
   uri: SERVER_URI,
@@ -41,7 +43,9 @@ const client = new ApolloClient({
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <RoomProvider>
+        <App />
+      </RoomProvider>
     </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
