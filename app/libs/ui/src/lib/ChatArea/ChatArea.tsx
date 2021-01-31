@@ -54,7 +54,7 @@ export const ChatArea: React.FC<Props> = () => {
   };
 
   const handleSend = async () => {
-    await addNewMessage({ variables: { id: currentRoomId, message } });
+    await addNewMessage({ variables: { id: currentRoomId, message } }).catch(err=> console.log(err));
   };
 
   return (

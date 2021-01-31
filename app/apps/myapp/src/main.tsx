@@ -16,6 +16,7 @@ import { RoomProvider } from '@app/ui';
 
 const httpLink = new HttpLink({
   uri: SERVER_URI,
+  credentials: 'include',
 });
 
 // Create a WebSocket link:

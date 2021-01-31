@@ -1,4 +1,6 @@
+import { useMutation } from '@apollo/client';
 import { Modal, TextField, Button } from '@material-ui/core';
+import { LOGIN } from 'libs/ui/src/core/user/schema';
 import React from 'react';
 import {
   AlignItem,
@@ -8,10 +10,25 @@ import {
 } from '../../FlexBox/FlexBox';
 
 const LoginForm: React.FC<any> = ({ handleClose, open }) => {
+  const [loginError, setLoginError] = React.useState(null);
   const [input, setInput] = React.useState({
     email: '',
     password: '',
   });
+  const [login, { error }] = useMutation(LOGIN);
+
+  const handleSubmit = async () => {
+    console.log(error);
+    await login({ variables: input })
+      .then((res) => {
+        if (!res.data.login) {
+          setLoginError(null);
+          handleClose();
+        }
+      })
+      .catch(() => setLoginError('There was something wrong!'));
+  };
+
   return (
     <Modal
       open={open}
@@ -39,13 +56,16 @@ const LoginForm: React.FC<any> = ({ handleClose, open }) => {
         >
           Login Form
           <TextField
+            error={!!loginError}
             id="email"
             label="Email"
             style={{ marginTop: '20px' }}
             value={input.email}
             onChange={(e) => setInput({ ...input, email: e.target.value })}
+            helperText={loginError}
           />
           <TextField
+            error={!!loginError}
             id="password"
             label="Password"
             value={input.password}
@@ -59,7 +79,11 @@ const LoginForm: React.FC<any> = ({ handleClose, open }) => {
             <Button variant="contained" onClick={handleClose} color="primary">
               Close
             </Button>
-            <Button variant="contained" color="secondary">
+            <Button
+              onClick={handleSubmit}
+              variant="contained"
+              color="secondary"
+            >
               Log in
             </Button>
           </FlexBox>

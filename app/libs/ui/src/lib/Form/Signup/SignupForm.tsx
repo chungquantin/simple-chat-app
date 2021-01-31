@@ -14,6 +14,9 @@ const SignupForm: React.FC<any> = ({ handleClose, open }) => {
     fName: '',
     lName: '',
   });
+  const handleSubmit = () => {
+    console.log(input);
+  };
   return (
     <Modal
       open={open}
