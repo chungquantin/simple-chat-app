@@ -5,9 +5,8 @@ import {
   FlexJustify,
   AlignItem,
 } from '../FlexBox/FlexBox';
-import { Grid, List, TextField, Button, ButtonGroup } from '@material-ui/core';
+import { Grid, TextField, Button, ButtonGroup } from '@material-ui/core';
 import { GET_ROOM } from '../../core/room/schema';
-import ChatBubble from '../ChatBubble/ChatBubble';
 import { Room, User } from '../../common/type';
 import { useMutation, useQuery } from '@apollo/client';
 import { Message } from '../../common/type';
@@ -18,10 +17,12 @@ import { ADD_NEW_MESSAGE } from '../../core/chat/schema';
 import LoginForm from '../Form/Login/LoginForm';
 import SignupForm from '../Form/Signup/SignupForm';
 import { ME } from '../../core/user/schema';
+import { ChatBubbleContainer } from '../ChatBubbleContainer/ChatBubbleContainer';
 const moment = require('moment');
 
 interface Props {}
 export const ChatArea: React.FC<Props> = () => {
+  const [roomMessages, setRoomMessages] = React.useState([]);
   const [openForm, setOpenForm] = React.useState<{
     login: Boolean;
     signup: Boolean;
@@ -37,15 +38,23 @@ export const ChatArea: React.FC<Props> = () => {
       id: currentRoomId,
     },
   });
+  let roomMessage = getRoomQuery?.data?.getRoom?.messages;
   if (getRoomQuery.error) {
     console.log(getRoomQuery.error);
   }
-  const newMessagesAdded: Message[] = [];
   const { data } = useMessageAdded(currentRoomId);
-  if (data?.newRoomMessageAdded) {
-    console.log(newMessagesAdded, data);
-    newMessagesAdded.push({ ...data?.newRoomMessageAdded });
-  }
+  React.useEffect(() => {
+    if (data?.newRoomMessageAdded) {
+      const newMessage = [
+        {
+          ...data?.newRoomMessageAdded,
+        },
+      ];
+      setRoomMessages(
+        (roomMessage) => (roomMessage = roomMessage?.concat(newMessage) as any)
+      );
+    }
+  }, [data?.newRoomMessageAdded]);
 
   const [addNewMessage] = useMutation(ADD_NEW_MESSAGE);
 
@@ -54,7 +63,6 @@ export const ChatArea: React.FC<Props> = () => {
     e.preventDefault();
   };
 
-  const { data: currentUser } = useQuery<{ me: Partial<User> }>(ME);
   const handleSend = async () => {
     await addNewMessage({
       variables: { id: currentRoomId, message },
@@ -105,44 +113,10 @@ export const ChatArea: React.FC<Props> = () => {
       </FlexBox>
       <FlexBox style={{ height: '80vh' }}>
         <Grid item xs={12}>
-          <List
-            style={{
-              height: '100%',
-              overflowY: 'auto',
-              padding: '10px',
-            }}
-          >
-            {getRoomQuery.loading ? (
-              <div>Loading...</div>
-            ) : (
-              getRoomQuery?.data?.getRoom?.messages.map((message) => (
-                <>
-                  <ChatBubble
-                    key={message?.id}
-                    message={message?.message}
-                    date={`${moment(message?.createdAt).format(
-                      'DD-MM-YYYY hh:mm'
-                    )}`}
-                    senderName={message?.sender.name}
-                    me={message?.sender.id === currentUser?.me?.id}
-                  />
-                </>
-              ))
-            )}
-            {newMessagesAdded.map((message) => (
-              <>
-                <ChatBubble
-                  key={message?.id}
-                  message={message?.message}
-                  date={`${moment(message?.createdAt).format(
-                    'DD-MM-YYYY hh:mm'
-                  )}`}
-                  senderName={message?.sender.name}
-                  me={message?.sender.id === currentUser?.me?.id}
-                />
-              </>
-            ))}
-          </List>
+          <ChatBubbleContainer
+            loading={getRoomQuery.loading}
+            messages={roomMessage?.concat(roomMessages)}
+          />
         </Grid>
       </FlexBox>
       <FlexBox
