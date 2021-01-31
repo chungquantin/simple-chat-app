@@ -98,7 +98,7 @@ const ChatBubble: React.FC<Partial<Props>> = (args) => {
                 align={AlignItem.center}
               >
                 <div style={{ fontSize: '11px' }}>{args.date}</div>
-                <div style={{ fontSize: '11px' }}>Chung Quan Tin</div>
+                <div style={{ fontSize: '11px' }}>{args.senderName}</div>
               </FlexBox>
             </Grid>
             <Grid item xs={12}>

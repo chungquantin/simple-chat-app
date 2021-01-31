@@ -7,6 +7,7 @@ export const NEW_ROOM_MESSAGE_ADDED = gql`
       sender {
         email
         name
+        id
       }
       room {
         name

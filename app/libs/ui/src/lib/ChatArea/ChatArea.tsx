@@ -14,10 +14,7 @@ import { Message } from '../../common/type';
 // import { Subscription } from 'react-apollo';
 import useMessageAdded from '../../core/hooks/useMessageAdded';
 import { RoomContext } from '../../state-management/context';
-import {
-  ADD_NEW_MESSAGE,
-  NEW_ROOM_MESSAGE_ADDED,
-} from '../../core/chat/schema';
+import { ADD_NEW_MESSAGE } from '../../core/chat/schema';
 import LoginForm from '../Form/Login/LoginForm';
 import SignupForm from '../Form/Signup/SignupForm';
 import { ME } from '../../core/user/schema';
@@ -58,7 +55,6 @@ export const ChatArea: React.FC<Props> = () => {
   };
 
   const { data: currentUser } = useQuery<{ me: Partial<User> }>(ME);
-  const inputEl = React.useRef(null);
   const handleSend = async () => {
     await addNewMessage({
       variables: { id: currentRoomId, message },
@@ -128,7 +124,7 @@ export const ChatArea: React.FC<Props> = () => {
                       'DD-MM-YYYY hh:mm'
                     )}`}
                     senderName={message?.sender.name}
-                    me={message?.id === currentUser?.me?.id}
+                    me={message?.sender.id === currentUser?.me?.id}
                   />
                 </>
               ))
@@ -142,7 +138,7 @@ export const ChatArea: React.FC<Props> = () => {
                     'DD-MM-YYYY hh:mm'
                   )}`}
                   senderName={message?.sender.name}
-                  me={message?.id === currentUser?.me?.id}
+                  me={message?.sender.id === currentUser?.me?.id}
                 />
               </>
             ))}

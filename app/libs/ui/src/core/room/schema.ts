@@ -17,6 +17,8 @@ export const GET_ROOMS = gql`
         createdAt
         sender {
           name
+          id
+          email
         }
       }
     }
@@ -39,6 +41,8 @@ export const GET_ROOM = gql`
         createdAt
         sender {
           name
+          email
+          id
         }
       }
     }
