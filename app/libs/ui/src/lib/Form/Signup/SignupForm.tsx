@@ -1,4 +1,6 @@
+import { useMutation } from '@apollo/client';
 import { Modal, TextField, Button } from '@material-ui/core';
+import { SIGN_UP } from 'libs/ui/src/core/user/schema';
 import React from 'react';
 import {
   AlignItem,
@@ -8,14 +10,24 @@ import {
 } from '../../FlexBox/FlexBox';
 
 const SignupForm: React.FC<any> = ({ handleClose, open }) => {
+  const [signupError, setSignupError] = React.useState(null);
   const [input, setInput] = React.useState({
     email: '',
     password: '',
-    fName: '',
-    lName: '',
+    firstName: '',
+    lastName: '',
   });
-  const handleSubmit = () => {
-    console.log(input);
+  const [signup, { error }] = useMutation(SIGN_UP);
+  const handleSubmit = async () => {
+    console.log(error);
+    await signup({ variables: input })
+      .then((res) => {
+        if (!res.data.login) {
+          setSignupError(null);
+          handleClose();
+        }
+      })
+      .catch(() => setSignupError('There was something wrong!'));
   };
   return (
     <Modal
@@ -46,26 +58,32 @@ const SignupForm: React.FC<any> = ({ handleClose, open }) => {
           <TextField
             id="fName"
             label="First Name"
-            value={input.email}
-            onChange={(e) => setInput({ ...input, fName: e.target.value })}
+            value={input.firstName}
+            onChange={(e) => setInput({ ...input, firstName: e.target.value })}
+            error={!!signupError}
+            helperText={signupError}
           />
           <TextField
             id="lName"
             label="Last Name"
-            value={input.email}
-            onChange={(e) => setInput({ ...input, lName: e.target.value })}
+            value={input.lastName}
+            onChange={(e) => setInput({ ...input, lastName: e.target.value })}
+            error={!!signupError}
           />
           <TextField
             id="email"
             label="Email"
             value={input.email}
             onChange={(e) => setInput({ ...input, email: e.target.value })}
+            error={!!signupError}
           />
           <TextField
             id="password"
             label="Password"
+            type="password"
             value={input.password}
             onChange={(e) => setInput({ ...input, password: e.target.value })}
+            error={!!signupError}
           />
           <FlexBox
             justify={FlexJustify.spaceBetween}
@@ -75,8 +93,12 @@ const SignupForm: React.FC<any> = ({ handleClose, open }) => {
             <Button variant="contained" onClick={handleClose} color="primary">
               Close
             </Button>
-            <Button variant="contained" color="secondary">
-              Log in
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              color="secondary"
+            >
+              Sign Up
             </Button>
           </FlexBox>
         </FlexBox>

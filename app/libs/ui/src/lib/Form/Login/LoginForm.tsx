@@ -67,6 +67,7 @@ const LoginForm: React.FC<any> = ({ handleClose, open }) => {
           <TextField
             error={!!loginError}
             id="password"
+            type="password"
             label="Password"
             value={input.password}
             onChange={(e) => setInput({ ...input, password: e.target.value })}

@@ -9,6 +9,27 @@ export const LOGIN = gql`
   }
 `;
 
+export const SIGN_UP = gql`
+  mutation Register(
+    $firstName: String!
+    $lastName: String!
+    $email: String!
+    $password: String!
+  ) {
+    register(
+      data: {
+        firstName: $firstName
+        lastName: $lastName
+        email: $email
+        password: $password
+      }
+    ) {
+      path
+      message
+    }
+  }
+`;
+
 export const ME = gql`
   query Me {
     me {
