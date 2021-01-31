@@ -1,5 +1,6 @@
 # Simple Chat App
 The simple chat app with TypeGraphQL, TypeORM, GraphQL Yoga, Nx Monorepo and React
+
 This project uses the template https://github.com/chungquantin/typegraphql-graphql-nx-boilerplate
 
 - TypeORM: For data mapping and database design
