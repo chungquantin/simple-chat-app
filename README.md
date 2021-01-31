@@ -1,6 +1,6 @@
 # Simple Chat App
 
-https://user-images.githubusercontent.com/56880684/106380099-a52ed280-63e2-11eb-8968-761ef6016a97.png
+![ảnh](https://user-images.githubusercontent.com/56880684/106380099-a52ed280-63e2-11eb-8968-761ef6016a97.png)
 
 The simple chat app with TypeGraphQL, TypeORM, GraphQL Yoga, Nx Monorepo and React
 
