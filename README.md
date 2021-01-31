@@ -8,3 +8,5 @@ This project uses the template https://github.com/chungquantin/typegraphql-graph
 - Graph Yoga: A library for constructing the GraphQL server (Apollo Server-like)
 - Nx Monorepo: A tool for making the client extensible with the monorepo microservice architecture
 - React: Front-end framework
+
+Instead of using socket.io for real-time data update, I use GraphQL Subscription.
