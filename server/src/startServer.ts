@@ -17,11 +17,24 @@ export const startServer = async () => {
 		await new REDIS().server.flushall();
 	}
 	const connectionOptions = await getConnectionOptions("default");
-	await createConnection({
+	const extendedOptions = {
 		...connectionOptions,
 		dropSchema: process.env.NODE_ENV?.trim() === EnvironmentType.TEST,
 		namingStrategy: new SnakeNamingStrategy(),
-	});
+	};
+	if (
+		process.env.DATABASE_URL &&
+		process.env.NODE_ENV?.trim() === EnvironmentType.PROD
+	) {
+		Object.assign(extendedOptions, {
+			url: process.env.DATABASE_URL,
+			ssl:
+				process.env.NODE_ENV?.trim() === EnvironmentType.PROD
+					? { rejectUnauthorized: false }
+					: false,
+		});
+	}
+	await createConnection(extendedOptions);
 
 	const server = new GraphQLServer({
 		schema: await genSchema(),
