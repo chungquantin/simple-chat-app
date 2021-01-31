@@ -48,3 +48,12 @@ export const GET_ROOM = gql`
     }
   }
 `;
+
+export const ADD_NEW_ROOM = gql`
+  mutation AddNewRoom($name: String!) {
+    addNewRoom(data: { name: $name }) {
+      path
+      message
+    }
+  }
+`;

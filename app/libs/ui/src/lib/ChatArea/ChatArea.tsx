@@ -9,20 +9,28 @@ import { Grid, TextField, Button, ButtonGroup } from '@material-ui/core';
 import { GET_ROOM } from '../../core/room/schema';
 import { Room, User } from '../../common/type';
 import { useMutation, useQuery } from '@apollo/client';
-import { Message } from '../../common/type';
 // import { Subscription } from 'react-apollo';
 import useMessageAdded from '../../core/hooks/useMessageAdded';
 import { RoomContext } from '../../state-management/context';
 import { ADD_NEW_MESSAGE } from '../../core/chat/schema';
 import LoginForm from '../Form/Login/LoginForm';
 import SignupForm from '../Form/Signup/SignupForm';
-import { ME } from '../../core/user/schema';
 import { ChatBubbleContainer } from '../ChatBubbleContainer/ChatBubbleContainer';
+import { LOGOUT, ME } from '../../core/user/schema';
 const moment = require('moment');
 
 interface Props {}
 export const ChatArea: React.FC<Props> = () => {
+  const roomContext = React.useContext(RoomContext);
+  const { data: currentUser } = useQuery<{ me: Partial<User> }>(ME);
   const [roomMessages, setRoomMessages] = React.useState([]);
+  const [message, setMessage] = React.useState('');
+  const currentRoomId = roomContext.roomState.data?.selectedRoom;
+  const getRoomQuery = useQuery<{ getRoom: Room }>(GET_ROOM, {
+    variables: {
+      id: currentRoomId,
+    },
+  });
   const [openForm, setOpenForm] = React.useState<{
     login: Boolean;
     signup: Boolean;
@@ -30,19 +38,15 @@ export const ChatArea: React.FC<Props> = () => {
     login: false,
     signup: false,
   });
-  const roomContext = React.useContext(RoomContext);
-  const currentRoomId = roomContext.roomState.data?.selectedRoom;
-  const [message, setMessage] = React.useState('');
-  const getRoomQuery = useQuery<{ getRoom: Room }>(GET_ROOM, {
-    variables: {
-      id: currentRoomId,
-    },
-  });
-  let roomMessage = getRoomQuery?.data?.getRoom?.messages;
-  if (getRoomQuery.error) {
-    console.log(getRoomQuery.error);
-  }
   const { data } = useMessageAdded(currentRoomId);
+  const [addNewMessage] = useMutation(ADD_NEW_MESSAGE);
+  let roomMessage = getRoomQuery?.data?.getRoom?.messages;
+  const [logout] = useMutation(LOGOUT);
+
+  if (getRoomQuery?.error) {
+    console.log(getRoomQuery?.error);
+  }
+
   React.useEffect(() => {
     if (data?.newRoomMessageAdded) {
       const newMessage = [
@@ -56,8 +60,6 @@ export const ChatArea: React.FC<Props> = () => {
     }
   }, [data?.newRoomMessageAdded]);
 
-  const [addNewMessage] = useMutation(ADD_NEW_MESSAGE);
-
   const handleInputFieldChange = (e) => {
     setMessage(e.target.value);
     e.preventDefault();
@@ -66,7 +68,7 @@ export const ChatArea: React.FC<Props> = () => {
   const handleSend = async () => {
     await addNewMessage({
       variables: { id: currentRoomId, message },
-    }).catch((err) => console.log(err));
+    }).catch((err) => window.alert('You must login first'));
 
     setMessage('');
   };
@@ -89,26 +91,44 @@ export const ChatArea: React.FC<Props> = () => {
         }}
       >
         <div>
-          {getRoomQuery.data?.getRoom?.name} 😯{' '}
-          {getRoomQuery.data?.getRoom?.members.length} members
+          {getRoomQuery?.data?.getRoom?.name} 😯{' '}
+          {getRoomQuery?.data?.getRoom?.members.length} members
         </div>
         <div>
-          <ButtonGroup variant="text" color="default" aria-label="">
-            <Button onClick={() => setOpenForm({ ...openForm, login: true })}>
-              Login
-            </Button>
-            <LoginForm
-              open={openForm.login}
-              handleClose={() => setOpenForm({ ...openForm, login: false })}
-            />
-            <Button onClick={() => setOpenForm({ ...openForm, signup: true })}>
-              Sign up
-            </Button>
-            <SignupForm
-              open={openForm.signup}
-              handleClose={() => setOpenForm({ ...openForm, signup: false })}
-            />
-          </ButtonGroup>
+          {!!currentUser?.me ? (
+            <>
+              {currentUser?.me.name}
+              <Button
+                style={{ marginLeft: '10px' }}
+                variant="text"
+                color="secondary"
+                onClick={async () =>
+                  await logout().catch((err) => console.log(err))
+                }
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <ButtonGroup variant="text" color="default" aria-label="">
+              <Button onClick={() => setOpenForm({ ...openForm, login: true })}>
+                Login
+              </Button>
+              <LoginForm
+                open={openForm.login}
+                handleClose={() => setOpenForm({ ...openForm, login: false })}
+              />
+              <Button
+                onClick={() => setOpenForm({ ...openForm, signup: true })}
+              >
+                Sign up
+              </Button>
+              <SignupForm
+                open={openForm.signup}
+                handleClose={() => setOpenForm({ ...openForm, signup: false })}
+              />
+            </ButtonGroup>
+          )}
         </div>
       </FlexBox>
       <FlexBox style={{ height: '80vh' }}>
@@ -131,7 +151,7 @@ export const ChatArea: React.FC<Props> = () => {
           <TextField
             style={{ width: '100%' }}
             id="outlined-basic"
-            label="Outlined"
+            label="Type your message..."
             variant="outlined"
             value={message}
             onChange={handleInputFieldChange}

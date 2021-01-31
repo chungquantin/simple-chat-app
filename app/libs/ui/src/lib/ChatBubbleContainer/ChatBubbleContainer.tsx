@@ -30,8 +30,8 @@ export const ChatBubbleContainer: React.FC<Props> = ({ loading, messages }) => {
               key={message?.id}
               message={message?.message}
               date={`${moment(message?.createdAt).format('DD-MM-YYYY hh:mm')}`}
-              senderName={message?.sender.name}
-              me={message?.sender.id === currentUser?.me?.id}
+              senderName={message?.sender?.name}
+              me={message?.sender?.id === currentUser?.me?.id}
             />
           </>
         ))
