@@ -1,4 +1,4 @@
-# typegraphql-apollo-boilerplate
+# Simple Chat App
 The simple chat app with TypeGraphQL, TypeORM, GraphQL Yoga, Nx Monorepo and React
 
 - TypeORM: For data mapping and database design
