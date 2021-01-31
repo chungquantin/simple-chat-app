@@ -8,19 +8,22 @@ import {
 import { Grid, List, TextField, Button, ButtonGroup } from '@material-ui/core';
 import { GET_ROOM } from '../../core/room/schema';
 import ChatBubble from '../ChatBubble/ChatBubble';
-import { Room } from '../../common/type';
+import { Room, User } from '../../common/type';
 import { useMutation, useQuery } from '@apollo/client';
 import { Message } from '../../common/type';
 // import { Subscription } from 'react-apollo';
 import useMessageAdded from '../../core/hooks/useMessageAdded';
 import { RoomContext } from '../../state-management/context';
-import { ADD_NEW_MESSAGE } from '../../core/chat/schema';
+import {
+  ADD_NEW_MESSAGE,
+  NEW_ROOM_MESSAGE_ADDED,
+} from '../../core/chat/schema';
 import LoginForm from '../Form/Login/LoginForm';
 import SignupForm from '../Form/Signup/SignupForm';
+import { ME } from '../../core/user/schema';
 const moment = require('moment');
 
 interface Props {}
-
 export const ChatArea: React.FC<Props> = () => {
   const [openForm, setOpenForm] = React.useState<{
     login: Boolean;
@@ -43,6 +46,7 @@ export const ChatArea: React.FC<Props> = () => {
   const newMessagesAdded: Message[] = [];
   const { data } = useMessageAdded(currentRoomId);
   if (data?.newRoomMessageAdded) {
+    console.log(newMessagesAdded, data);
     newMessagesAdded.push({ ...data?.newRoomMessageAdded });
   }
 
@@ -53,8 +57,14 @@ export const ChatArea: React.FC<Props> = () => {
     e.preventDefault();
   };
 
+  const { data: currentUser } = useQuery<{ me: Partial<User> }>(ME);
+  const inputEl = React.useRef(null);
   const handleSend = async () => {
-    await addNewMessage({ variables: { id: currentRoomId, message } }).catch(err=> console.log(err));
+    await addNewMessage({
+      variables: { id: currentRoomId, message },
+    }).catch((err) => console.log(err));
+
+    setMessage('');
   };
 
   return (
@@ -118,7 +128,7 @@ export const ChatArea: React.FC<Props> = () => {
                       'DD-MM-YYYY hh:mm'
                     )}`}
                     senderName={message?.sender.name}
-                    me={message?.id === message?.sender.id}
+                    me={message?.id === currentUser?.me?.id}
                   />
                 </>
               ))
@@ -132,7 +142,7 @@ export const ChatArea: React.FC<Props> = () => {
                     'DD-MM-YYYY hh:mm'
                   )}`}
                   senderName={message?.sender.name}
-                  me={message?.id === message?.sender.id}
+                  me={message?.id === currentUser?.me?.id}
                 />
               </>
             ))}
@@ -153,6 +163,7 @@ export const ChatArea: React.FC<Props> = () => {
             id="outlined-basic"
             label="Outlined"
             variant="outlined"
+            value={message}
             onChange={handleInputFieldChange}
           />
           <Button
